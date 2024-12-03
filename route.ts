@@ -15,6 +15,9 @@ export const authRoutes = [
   "/auth/register",
   "/auth/error",
   "/auth/reset",
+  "/auth/new-password",
+
+
 ];
 /**
  * Prefiz for API authentication routes
