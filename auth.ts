@@ -15,7 +15,6 @@ export const {
   pages: {
     signIn: "/auth/login",
     error: "/auth/error",
-    
   },
   events: {
     async linkAccount({ user }) {
@@ -26,6 +25,17 @@ export const {
     },
   },
   callbacks: {
+    async signIn({ user, account }) {
+      //allow OAuth without email verification
+      if (account?.provider !== "credentials") return true;
+      const existingUser = await getUserById(user.id as string);
+      //prevent sign in without email verification
+      if (!existingUser?.emailVerified) return false;
+
+      //TODO add 2FA check
+
+      return true;
+    },
     async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
