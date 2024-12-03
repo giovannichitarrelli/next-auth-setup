@@ -1,0 +1,12 @@
+npm i uuid
+npm i -save-dev @types/uuid
+npm i resend
+npm i react-icons
+npm i react-spinners
+npm i shadcn
+npm i next-auth
+npm i bcryptjs
+npm i -save-dev @types/bcryptjs
+npm i  prisma
+npm i zod
+npm i
