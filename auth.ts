@@ -1,5 +1,4 @@
 import NextAuth from "next-auth";
-
 import authConfig from "./auth.config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "./lib/db";
@@ -38,14 +37,13 @@ export const {
           existingUser.id
         );
 
- 
         if (!twoFactorConfirmation) return false;
 
         //delete two factor confirmation for next sign in
 
         await db.twoFactorConfirmation.delete({
-          where: { id : twoFactorConfirmation.id}
-        })
+          where: { id: twoFactorConfirmation.id },
+        });
       }
 
       return true;
