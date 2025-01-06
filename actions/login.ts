@@ -15,7 +15,10 @@ import { LoginSchema } from "@/schemas";
 import { AuthError } from "next-auth";
 import * as z from "zod";
 
-export const login = async (values: z.infer<typeof LoginSchema>) => {
+export const login = async (
+  values: z.infer<typeof LoginSchema>,
+  callbackUrl?: string | null
+) => {
   const validatedFields = LoginSchema.safeParse(values);
 
   if (!validatedFields.success) {
@@ -50,35 +53,34 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
         return { error: "Invalid Code!" };
       }
 
-      if(twoFactorToken.token !== code) {
-        return { error:"Invalid Code!"}
+      if (twoFactorToken.token !== code) {
+        return { error: "Invalid Code!" };
       }
 
-      const hasExpired = new Date(twoFactorToken.expires) < new Date()
-      if(hasExpired) {
-        return { error: "Code expired!"}
+      const hasExpired = new Date(twoFactorToken.expires) < new Date();
+      if (hasExpired) {
+        return { error: "Code expired!" };
       }
 
       await db.twoFactorToken.delete({
-        where: {id: twoFactorToken.id}
-      })
+        where: { id: twoFactorToken.id },
+      });
 
+      const existingConfirmation = await getTwoFactorConfirmationByUserId(
+        existingUser.id
+      );
 
-      const existingConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id)
-
-      if(existingConfirmation){
+      if (existingConfirmation) {
         await db.twoFactorConfirmation.delete({
-          where: { id: existingConfirmation.id}
-        })
+          where: { id: existingConfirmation.id },
+        });
       }
-
 
       await db.twoFactorConfirmation.create({
         data: {
-          userId: existingUser.id
-        }
-      })
-
+          userId: existingUser.id,
+        },
+      });
     } else {
       const twoFactorToken = await generateTwoFactorToken(existingUser.email);
 
@@ -91,8 +93,8 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: DEFAULT_LOGIN_REDIRECT,
-    });
+      redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
+     });
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
