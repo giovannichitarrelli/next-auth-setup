@@ -7,8 +7,6 @@ interface Props {
   label: string;
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 const UserInfo = ({ user, label }: Props) => {
   return (
     <Card className="w-[600px] shadow-md">

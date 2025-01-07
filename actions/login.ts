@@ -33,7 +33,6 @@ export const login = async (
   }
 
   if (!existingUser.emailVerified) {
-    /* eslint-disable @typescript-eslint/no-unused-vars */
     const verificationToken = await generateVerificationToken(
       existingUser.email
     );
@@ -94,7 +93,7 @@ export const login = async (
       email,
       password,
       redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
-     });
+    });
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
